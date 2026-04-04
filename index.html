@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategia Fibo Fibo Geixa.ITA V3.2</title>
+    <style>
+        :root {
+            --green: #27ae60;
+            --red: #e74c3c;
+            --black: #2c3e50;
+            --gold: #f1c40f;
+            --gray-labels: #555;
+            --blue: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ecf0f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 950px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--blue);
+            padding-bottom: 10px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .btn-mode { background-color: var(--blue); color: white; }
+        .btn-mode.active { background-color: var(--black); outline: 3px solid var(--gold); }
+        .btn-cap { background-color: #95a5a6; color: white; }
+        .btn-cap.active { background-color: var(--black); outline: 2px solid var(--gold); }
+
+        .roulette-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .dozzine-labels {
+            display: grid;
+            grid-template-columns: 50px repeat(12, 45px) 120px;
+            gap: 2px;
+            margin-bottom: 4px;
+            padding: 0 5px;
+        }
+
+        .label-gray {
+            background-color: var(--gray-labels);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 0;
+            border-radius: 3px;
+        }
+
+        .d1 { grid-column: 2 / span 4; }
+        .d2 { grid-column: 6 / span 4; }
+        .d3 { grid-column: 10 / span 4; }
+
+        .roulette-grid {
+            display: grid;
+            grid-template-columns: 50px repeat(12, 45px) 120px;
+            grid-template-rows: repeat(3, 45px);
+            gap: 2px;
+            background-color: #444;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .num {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 3px;
+            font-size: 1.1rem;
+        }
+        .zero { grid-row: 1 / span 3; background-color: var(--green); }
+        .red { background-color: var(--red); }
+        .black { background-color: var(--black); }
+
+        .suggerimenti-area {
+            background: #fdfdfd;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            min-height: 80px;
+        }
+
+        .sugg-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .check-box {
+            width: 25px;
+            height: 25px;
+            border: 2px solid var(--blue);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: transparent;
+            font-size: 1.2rem;
+            transition: 0.2s;
+        }
+
+        .check-box.selected {
+            background: var(--green);
+            border-color: var(--green);
+            color: white;
+        }
+
+        .db-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+            background: #f8f9fa;
+            border: 2px solid var(--gold);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .db-card { border-left: 4px solid var(--gold); padding-left: 10px; }
+        .db-val { display: block; font-size: 1.1rem; font-weight: bold; color: var(--black); }
+        .db-label { font-size: 0.7rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; }
+
+        .history-list { display: flex; flex-wrap: wrap; gap: 5px; margin: 15px 0; }
+        .hist-ball { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.8rem; font-weight: bold; }
+
+        .watermark { text-align: center; margin-top: 20px; font-size: 0.85rem; font-weight: bold; color: #34495e; }
+
+        /* STILI ORIGINALI AAAAA.HTML */
+        .table-wrapper {
+            width: 95%;
+            max-width: 1100px;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #ed7d31;
+            color: white;
+            padding: 8px 2px;
+            border: 1px solid #444;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .head-loss { background-color: #ff9999 !important; color: black !important; }
+        .head-win { background-color: #c6efce !important; color: black !important; }
+        .head-ratio { background-color: #d9e1f2 !important; color: black !important; }
+
+        td {
+            padding: 5px 3px;
+            border: 1px solid #ccc;
+            white-space: nowrap;
+        }
+
+        .col-n { background-color: #ed7d31; font-weight: bold; color: white; border: 1px solid #444; }
+        .col-seq { background-color: #ffc000; font-weight: bold; color: black; border: 1px solid #444; }
+        .valuta { background-color: #fff2cc; font-weight: 500; }
+        .row-totale { background-color: #ffff00 !important; font-weight: bold; color: black; }
+        .perc-loss { background-color: #ffc7ce; color: #9c0006; }
+        .perc-win { background-color: #c6efce; color: #006100; font-weight: bold; }
+        .ratio-col { background-color: #e2efda; color: #3f3f3f; }
+        .ratio-highlight { background-color: #ffff00 !important; border: 1px solid #444 !important; font-weight: bold; }
+        .grey-row { background-color: #d9d9d9; color: #333; }
+        .col-n-grey { background-color: #bfbfbf; font-weight: bold; border: 1px solid #888; }
+        .text-strat { text-align: center; font-weight: bold; font-style: italic; }
+
+        @media (max-width: 800px) {
+            table { font-size: 10px; }
+            .table-wrapper { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Strategia Fibo Fibo Geixa.ITA V3.2</h1>
+
+    <div class="btn-group">
+        <button id="m1" class="btn-mode active" onclick="setSalto(1, this)">Modalità 1</button>
+        <button class="btn-mode" onclick="setSalto(2, this)">Modalità 2</button>
+        <button class="btn-mode" onclick="setSalto(3, this)">Modalità 3</button>
+        <button class="btn-mode" onclick="setSalto(4, this)">Modalità 4</button>
+        <button class="btn-mode" onclick="setSalto(5, this)">Modalità 5</button>
+        <button class="btn-mode" onclick="setSalto(10, this)">Modalità 10</button>
+    </div>
+
+    <div class="btn-group">
+        <button id="c1" class="btn-cap active" onclick="setCap(0.1, this)">€0.10</button>
+        <button class="btn-cap" onclick="setCap(0.2, this)">€0.20</button>
+        <button class="btn-cap" onclick="setCap(0.5, this)">€0.50</button>
+        <button class="btn-cap" onclick="setCap(1, this)">€1.00</button>
+        <button class="btn-cap" onclick="setCap(2, this)">€2.00</button>
+        <button class="btn-cap" onclick="setCap(5, this)">€5.00</button>
+        <button class="btn-cap" onclick="setCap(10, this)">€10.00</button>
+    </div>
+
+    <div class="roulette-wrapper">
+        <div class="dozzine-labels">
+            <div></div><div class="label-gray d1">1 - 12</div><div class="label-gray d2">13 - 24</div><div class="label-gray d3">25 - 36</div>
+        </div>
+        <div class="roulette-grid" id="grid"></div>
+    </div>
+
+    <div class="history-list" id="hist"></div>
+
+    <div class="suggerimenti-area" id="sugg-area">
+        <div style="color:#7f8c8d; font-style:italic;">In attesa di analisi...</div>
+    </div>
+
+    <div class="db-container">
+        <div class="db-card"><span class="db-label">Puntare Prossimo</span><span class="db-val" id="db-puntata">--</span></div>
+        <div class="db-card"><span class="db-label">% di Vincita</span><span class="db-val" id="db-vincita">--</span></div>
+        <div class="db-card"><span class="db-label">Rapporto (1/X)</span><span class="db-val" id="db-stat">--</span></div>
+    </div>
+
+    <div class="btn-group" style="margin-top:20px;">
+        <button style="background:#7f8c8d; color:white;" onclick="annullaMossa()">Annulla Ultima Mossa</button>
+        <button style="background:var(--red); color:white;" onclick="resetTutto()">Reset Totale Dati</button>
+    </div>
+
+    <div class="watermark">By @gesualdo.briviz</div>
+</div>
+
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>N° G.</th>
+                <th>SEQUENZA</th>
+                <th>€ 0,10</th>
+                <th>€ 0,20</th>
+                <th>€ 0,50</th>
+                <th>€ 1</th>
+                <th>€ 2</th>
+                <th>€ 5</th>
+                <th>€ 10</th>
+                <th class="head-loss">% perdita</th>
+                <th class="head-win">% vincita</th>
+                <th class="head-ratio">rapporto p.</th>
+            </tr>
+        </thead>
+        <tbody id="table-content"></tbody>
+    </table>
+</div>
+
+<script>
+    // --- COSTANTI UNIFICATE (VALIDE PER TUTTO IL PROGRAMMA) ---
+    const REDS = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+    
+    // Sequenza Fibonacci estesa fino a 35 step
+    const FIBO_FULL = [
+        1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765,
+        10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269, 2178309, 3524578, 5702887, 9227465
+    ];
+    
+    // Statistiche unificate (v = % vincita, s = rapporto 1/X)
+    // Formato: 4 decimali fissi, virgola per decimali, punto per migliaia
+    const STATS_MASTER = [
+        { v: "32,4324%", s: "1,48" },    { v: "54,3502%", s: "2,19" },    { v: "69,1555%", s: "3,24" },    { v: "79,1591%", s: "4,80" },    { v: "85,9183%", s: "7,10" },
+        { v: "90,4854%", s: "10,51" },   { v: "93,5712%", s: "15,55" },   { v: "95,6562%", s: "23,02" },   { v: "97,0650%", s: "34,07" },   { v: "98,0169%", s: "50,42" },
+        { v: "98,6601%", s: "74,62" },   { v: "99,0946%", s: "110,4" },   { v: "99,3883%", s: "163,4" },   { v: "99,5867%", s: "241,8" },   { v: "99,7207%", s: "357,9" },
+        { v: "99,8113%", s: "529,6" },   { v: "99,8725%", s: "783,7" },   { v: "99,9138%", s: "1.160" },   { v: "99,9418%", s: "1.716" },   { v: "99,9607%", s: "2.540" },
+        { v: "99,9734%", s: "3.759" },  { v: "99,9821%", s: "5.564" },  { v: "99,9879%", s: "8.234" },  { v: "99,9918%", s: "12.185" }, { v: "99,9945%", s: "18.032" },
+        { v: "99,9963%", s: "26.685" }, { v: "99,9975%", s: "39.491" }, { v: "99,9983%", s: "58.441" }, { v: "99,9988%", s: "86.485" }, { v: "99,9992%", s: "127.985" },
+        { v: "99,9995%", s: "189.399" }, { v: "99,9996%", s: "280.283" }, { v: "99,9998%", s: "414.774" }, { v: "99,9998%", s: "613.810" }, { v: "99,9999%", s: "908.347" }
+    ];
+
+    // --- LOGICA SIMULATORE ---
+    let salto = 1; let cap = 0.1; let storico = []; let step = 0; let activeBet = null;
+
+    function init() {
+        const g = document.getElementById('grid');
+        const z = document.createElement('div'); z.className = 'num zero'; z.innerText='0'; z.onclick=()=>addNum(0); g.appendChild(z);
+        const rows = [[3,6,9,12,15,18,21,24,27,30,33,36],[2,5,8,11,14,17,20,23,26,29,32,35],[1,4,7,10,13,16,19,22,25,28,31,34]];
+        rows.forEach((row, i) => {
+            const lbl = document.createElement('div'); lbl.className='label-gray'; lbl.innerText=`${3-i}° Riga Oriz.`; lbl.style.gridArea=`${i+1}/14`; g.appendChild(lbl);
+            row.forEach((n, j) => {
+                const b = document.createElement('div'); b.className=`num ${REDS.includes(n)?'red':'black'}`;
+                b.innerText=n; b.style.gridArea=`${i+1}/${j+2}`; b.onclick=()=>addNum(n); g.appendChild(b);
+            });
+        });
+        analizza();
+    }
+
+    function setSalto(n, b) { salto=n; document.querySelectorAll('.btn-mode').forEach(x=>x.classList.remove('active')); b.classList.add('active'); analizza(); }
+    function setCap(n, b) { cap=n; document.querySelectorAll('.btn-cap').forEach(x=>x.classList.remove('active')); b.classList.add('active'); updateStats(); }
+
+    function addNum(n) {
+        if(activeBet) {
+            let win = false;
+            if(activeBet.type==='D') {
+                if(activeBet.val===1 && n>=1 && n<=12) win=true;
+                else if(activeBet.val===2 && n>=13 && n<=24) win=true;
+                else if(activeBet.val===3 && n>=25 && n<=36) win=true;
+            } else {
+                if(activeBet.val===1 && (n-1)%3===0 && n!==0) win=true;
+                else if(activeBet.val===2 && (n-2)%3===0 && n!==0) win=true;
+                else if(activeBet.val===3 && (n-3)%3===0 && n!==0) win=true;
+            }
+            if(win) { step=0; activeBet=null; } else { step++; }
+        }
+        storico.push(n); analizza(); updateHist();
+    }
+
+    function getRitardo(type, val) {
+        let ritardo = 0;
+        for (let i = storico.length - 1; i >= 0; i--) {
+            let n = storico[i];
+            let isMatch = (type === 'D') ? 
+                (val === 1 && n >= 1 && n <= 12) || (val === 2 && n >= 13 && n <= 24) || (val === 3 && n >= 25 && n <= 36) :
+                (val === 1 && (n-1)%3===0 && n!==0) || (val === 2 && (n-2)%3===0 && n!==0) || (val === 3 && (n-3)%3===0 && n!==0);
+            if (isMatch) break;
+            ritardo++;
+        }
+        return ritardo;
+    }
+
+    function analizza() {
+        const area = document.getElementById('sugg-area');
+        area.innerHTML = "";
+        let trovato = false;
+        const labels = ["1-12", "13-24", "25-36"];
+        [1, 2, 3].forEach(i => {
+            let ritD = getRitardo('D', i); let ritR = getRitardo('R', i);
+            if (ritD >= salto) { creaSugg(area, 'D', i, `🔥 PUNTARE SU: Dozzina Verticale ${labels[i-1]}`, ritD); trovato = true; }
+            if (ritR >= salto) { creaSugg(area, 'R', i, `🔥 PUNTARE SU: Riga Orizzontale ${i}`, ritR); trovato = true; }
+        });
+        if(!trovato) area.innerHTML = '<div style="color:#7f8c8d; font-style:italic;">Analisi: nessuna configurazione rilevata...</div>';
+        updateStats();
+    }
+
+    function creaSugg(cont, type, val, txt, ritardoAttuale) {
+        const div = document.createElement('div'); div.className = 'sugg-item';
+        const span = document.createElement('span'); span.innerText = txt;
+        const check = document.createElement('div'); check.className = 'check-box'; check.innerText = 'V';
+        if(activeBet && activeBet.type===type && activeBet.val===val) { check.classList.add('selected'); }
+        const stepInd = document.createElement('span');
+        stepInd.style.color = 'var(--blue)'; stepInd.innerText = `[Step ${ritardoAttuale}]`; 
+        check.onclick = () => { activeBet = {type, val}; step = 0; analizza(); };
+        div.appendChild(span); div.appendChild(check); div.appendChild(stepInd);
+        cont.appendChild(div);
+    }
+
+    function updateStats() {
+        const p = document.getElementById('db-puntata'), v = document.getElementById('db-vincita'), s = document.getElementById('db-stat');
+        if (!activeBet) { p.innerText = "--"; v.innerText = "--"; s.innerText = "--"; return; }
+        const safeStep = Math.min(step, FIBO_FULL.length - 1);
+        p.innerText = `€ ${(FIBO_FULL[safeStep] * cap).toFixed(2)}`;
+        
+        let currentDelay = getRitardo(activeBet.type, activeBet.val) + 1; 
+        let statIndex = Math.min(currentDelay - 1, STATS_MASTER.length - 1);
+        if (statIndex < 0) statIndex = 0;
+        
+        v.innerText = STATS_MASTER[statIndex].v;
+        s.innerText = `1 / ${STATS_MASTER[statIndex].s}`;
+    }
+
+    function updateHist() {
+        const h = document.getElementById('hist'); h.innerHTML = "";
+        storico.slice(-20).forEach(n => {
+            const b = document.createElement('div'); b.className='hist-ball';
+            b.style.background = n===0?'var(--green)':(REDS.includes(n)?'var(--red)':'var(--black)');
+            b.innerText=n; h.appendChild(b);
+        });
+    }
+
+    function annullaMossa() { 
+        if(storico.length === 0) return;
+        storico.pop(); 
+        if(activeBet) { if(step > 0) step--; else activeBet = null; }
+        analizza(); updateHist(); 
+    }
+    
+    function resetTutto() { storico=[]; step=0; activeBet=null; analizza(); updateHist(); }
+
+    init();
+
+    // --- GENERAZIONE TABELLA (IIFE) ---
+    (function() {
+        const CAPS = [0.10, 0.20, 0.50, 1.00, 2.00, 5.00, 10.00];
+        const container = document.getElementById('table-content');
+        let runningTotals = Array(CAPS.length).fill(0);
+        let html = "";
+
+        const fmt = (num, dec = 2) => num.toLocaleString('it-IT', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+
+        for (let i = 0; i < 35; i++) {
+            const f = FIBO_FULL[i];
+            const stat = STATS_MASTER[i];
+            
+            // Calcolo Perdita: estrae valore numerico, calcola il resto da 100 e formatta con 4 decimali
+            const vPura = parseFloat(stat.v.replace('%', '').replace(',', '.'));
+            const lossPerc = (100 - vPura).toFixed(4).replace('.', ',') + "%";
+            
+            let isGrey = (i >= 20);
+            let isSpecial = ((i + 1) % 5 === 0);
+            let rowClass = isSpecial ? "row-totale" : (isGrey ? "grey-row" : "");
+            let colNClass = isSpecial ? "col-n" : (isGrey ? "col-n-grey" : "col-n");
+
+            html += `<tr class="${rowClass}"><td class="${colNClass}">${i+1}°</td>`;
+            
+            if (i < 20) {
+                html += `<td class="col-seq">x${fmt(f, 0)}</td>`;
+                CAPS.forEach((c, idx) => {
+                    let val = f * c; runningTotals[idx] += val;
+                    html += `<td class="valuta">€ ${fmt(val)}</td>`;
+                });
+            } else {
+                html += `<td colspan="8" class="text-strat">STRATEGIA "SALTA ${i-19} NUMER${(i-19)===1?'O':'I'}"</td>`;
+            }
+
+            html += `<td class="perc-loss">${lossPerc}</td><td class="perc-win">${stat.v}</td><td class="ratio-col">1\\${stat.s}</td></tr>`;
+            
+            if (isSpecial && i < 20) {
+                html += `<tr class="row-totale"><td colspan="2">TOTALE S.</td>`;
+                runningTotals.forEach(t => html += `<td>€ ${fmt(t)}</td>`);
+                html += `<td colspan="3"></td></tr>`;
+            }
+        }
+        container.innerHTML = html;
+    })();
+</script>
+</body>
+</html>
