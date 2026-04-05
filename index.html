@@ -32,6 +32,7 @@
             max-width: 950px;
             width: 100%;
             margin-bottom: 30px;
+            box-sizing: border-box;
         }
 
         h1 {
@@ -184,7 +185,6 @@
 
         .watermark { text-align: center; margin-top: 20px; font-size: 0.85rem; font-weight: bold; color: #34495e; }
 
-        /* STILI ORIGINALI AAAAA.HTML */
         .table-wrapper {
             width: 95%;
             max-width: 1100px;
@@ -232,9 +232,70 @@
         .col-n-grey { background-color: #bfbfbf; font-weight: bold; border: 1px solid #888; }
         .text-strat { text-align: center; font-weight: bold; font-style: italic; }
 
+        /* =========================================================
+           OTTIMIZZAZIONE MOBILE IMPECCABILE (Aggiunta per schermi < 800px)
+           ========================================================= */
         @media (max-width: 800px) {
+            body { padding: 10px 5px; } /* Meno spazio perso ai lati */
+            
+            .container { 
+                padding: 15px 10px; 
+                margin-bottom: 15px; 
+                border-radius: 8px;
+            }
+            
+            h1 { font-size: 1.25rem; }
+
+            /* Pulsanti più compatti ma proporzionati */
+            .btn-group { gap: 5px; }
+            button { 
+                padding: 8px 10px; 
+                font-size: 0.75rem; 
+                flex-grow: 1; /* Fa espandere i bottoni per riempire la riga */
+            }
+
+            /* Scroll orizzontale fluido e visibile per il tappeto roulette */
+            .roulette-wrapper {
+                align-items: flex-start; /* Evita centramenti sballati nello scroll */
+                padding-bottom: 10px;
+                -webkit-overflow-scrolling: touch; /* Scroll fluido su iOS/Android */
+                scrollbar-width: thin;
+                scrollbar-color: var(--blue) #f1f1f1;
+            }
+            /* Stile barra di scorrimento webkit */
+            .roulette-wrapper::-webkit-scrollbar { height: 6px; }
+            .roulette-wrapper::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+            .roulette-wrapper::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 4px; }
+
+            /* Adattamento testi suggerimenti */
+            .sugg-item { 
+                font-size: 0.85rem; 
+                gap: 10px; 
+                flex-wrap: wrap; /* Evita che il testo esca dal box */
+            }
+
+            /* Dashboard a colonna su schermi piccolissimi */
+            .db-container { 
+                grid-template-columns: 1fr; 
+                gap: 8px; 
+                padding: 10px; 
+            }
+
+            .history-list { justify-content: center; }
+
+            /* Tabella: scroll fluido nativo */
+            .table-wrapper { 
+                width: 100%; 
+                margin-top: 10px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+                scrollbar-color: #ed7d31 #f1f1f1;
+            }
+            .table-wrapper::-webkit-scrollbar { height: 6px; }
+            .table-wrapper::-webkit-scrollbar-track { background: #f1f1f1; }
+            .table-wrapper::-webkit-scrollbar-thumb { background: #ed7d31; }
+            
             table { font-size: 10px; }
-            .table-wrapper { width: 100%; }
         }
     </style>
 </head>
